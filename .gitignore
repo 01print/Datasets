@@ -2,3 +2,15 @@
 .Rhistory
 .RData
 .Ruserdata
+*.csv
+*.Rda
+*.xlsx
+*.Rproj
+*.png
+*.gmt
+*.gz
+*.pdf
+*.tar
+*.soft
+*.tiff
+*.log
