@@ -1,5 +1,5 @@
 ############
-# 2021-09-04
+# 2021-09-04/05
 # small room in 2f
 # the datasets might needed in the future
 # glioma
@@ -17,7 +17,7 @@ data1 {
   library(tidyr)
   library(ggpubr)
   
-  gset = getGEO("GSE30219", destdir = ".", getGPL = F)
+  gset = getGEO("GSE16011", destdir = ".", getGPL = F)
   class(gset)
   str(gset)
   gset
