@@ -261,15 +261,17 @@ GSE4412 {
   class(gset)
   str(gset)
   gset
-  gset <- gset[[1]]
-  ## 表达矩阵
-  exprSet = exprs(gset)
-  a <- exprSet
-  exprSet <- normalizeBetweenArrays(exprSet)  ## 标准化一番
-  exprSet <- as.data.frame(exprSet) ## 转为数据框
-  exprSet <- log2(exprSet)
-  gene_id <- rownames(exprSet)
-  exprSet <- cbind("probe_id" = gene_id, exprSet)
+  gset1 <- gset$`GSE4412-GPL96_series_matrix.txt.gz` 
+  gset2 <- gset$`GSE4412-GPL97_series_matrix.txt.gz`
+  
+  ## 表达矩阵 GPL96处理
+  exprSet1 = exprs(gset1)
+  a <- exprSet1
+  exprSet1 <- normalizeBetweenArrays(exprSet1)  ## 标准化一番
+  exprSet1 <- as.data.frame(exprSet1) ## 转为数据框
+  exprSet1 <- log2(exprSet1)
+  gene_id1 <- rownames(exprSet1)
+  exprSet1 <- cbind("probe_id" = gene_id1, exprSet1)
   exprSet$probe_id <- as.character(exprSet$probe_id)
   
   ## 
