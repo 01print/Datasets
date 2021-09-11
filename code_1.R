@@ -265,30 +265,65 @@ GSE4412 {
   gset2 <- gset$`GSE4412-GPL97_series_matrix.txt.gz`
   
   ## 表达矩阵 GPL96处理
-  exprSet1 = exprs(gset1)
-  a <- exprSet1
-  exprSet1 <- normalizeBetweenArrays(exprSet1)  ## 标准化一番
-  exprSet1 <- as.data.frame(exprSet1) ## 转为数据框
-  exprSet1 <- log2(exprSet1)
-  gene_id1 <- rownames(exprSet1)
-  exprSet1 <- cbind("probe_id" = gene_id1, exprSet1)
-  exprSet$probe_id <- as.character(exprSet$probe_id)
+  expr_GPL96{
+    exprSet1 = exprs(gset1)
+    a <- exprSet1
+    exprSet1 <- normalizeBetweenArrays(exprSet1)  ## 标准化一番
+    exprSet1 <- as.data.frame(exprSet1) ## 转为数据框
+    exprSet1 <- log2(exprSet1)
+    gene_id1 <- rownames(exprSet1)
+    exprSet1 <- cbind("probe_id" = gene_id1, exprSet1)
+    exprSet1$probe_id <- as.character(exprSet1$probe_id)
+    
+    ## 
+    load("C:/Rlearn/GEO/GPL-probe2symbol/probe2symbol-GPL96.Rda")
+    exprSet1 <- exprSet1%>%
+      inner_join(probe2symbol,by="probe_id") %>% #合并探针的信息
+      select(-probe_id) %>% #去掉多余信息
+      select(symbol, everything()) %>% #重新排列，
+      mutate(rowMean =rowMeans(.[grep("GSM", names(.))])) %>% #求出平均数(这边的.真的是画龙点睛)
+      arrange(desc(rowMean)) %>% #把表达量的平均值按从大到小排序
+      distinct(symbol,.keep_all = T) %>% # symbol留下第一个
+      select(-rowMean) %>% #反向选择去除rowMean这一列
+      tibble::column_to_rownames(colnames(.)[1])
+    
+    save(exprSet1, file = "exprSet_GSE4412_GPL96.Rda")  ## 85个
+    
+  }
+  ## 表达矩阵 GPL97处理
+  expr_GPL97{
+    exprSet2 = exprs(gset2)
+    b <- exprSet2
+    exprSet2 <- normalizeBetweenArrays(exprSet2)  ## 标准化一番
+    exprSet2 <- as.data.frame(exprSet2) ## 转为数据框
+    exprSet2 <- log2(exprSet2)
+    gene_id2 <- rownames(exprSet2)
+    exprSet2 <- cbind("probe_id" = gene_id2, exprSet2)
+    exprSet2$probe_id <- as.character(exprSet2$probe_id)
+    
+    ## 制作probe2symbol, GPL97
+    GPL97.17394 <- read.delim("C:/Users/Pancheng/Downloads/GPL97-17394.txt", comment.char="#")
+    probe2symbol_GPL97 <- GPL97.17394[,c(1,11)]
+    names(probe2symbol_GPL97) <- c("probe_id","symbol")
+    save(probe2symbol_GPL97, file = "probe2symbol_GPL97.Rda")
+    
+    load("C:/Rlearn/GEO/GPL-probe2symbol/probe2symbol_GPL97.Rda")
+    exprSet2 <- exprSet2%>%
+      inner_join(probe2symbol_GPL97,by="probe_id") %>% #合并探针的信息
+      select(-probe_id) %>% #去掉多余信息
+      select(symbol, everything()) %>% #重新排列，
+      mutate(rowMean =rowMeans(.[grep("GSM", names(.))])) %>% #求出平均数(这边的.真的是画龙点睛)
+      arrange(desc(rowMean)) %>% #把表达量的平均值按从大到小排序
+      distinct(symbol,.keep_all = T) %>% # symbol留下第一个
+      select(-rowMean) %>% #反向选择去除rowMean这一列
+      tibble::column_to_rownames(colnames(.)[1])
+    
+    save(exprSet2, file = "exprSet_GSE4412_GPL97.Rda")  ## 85个, ## 11350 obs
+    
+  }
   
   ## 
-  load("C:/Rlearn/GEO/GPL-probe2symbol/probe2symbol-GPL570.Rda")
-  exprSet <- exprSet%>%
-    inner_join(probe2symbol,by="probe_id") %>% #合并探针的信息
-    select(-probe_id) %>% #去掉多余信息
-    select(symbol, everything()) %>% #重新排列，
-    mutate(rowMean =rowMeans(.[grep("GSM", names(.))])) %>% #求出平均数(这边的.真的是画龙点睛)
-    arrange(desc(rowMean)) %>% #把表达量的平均值按从大到小排序
-    distinct(symbol,.keep_all = T) %>% # symbol留下第一个
-    select(-rowMean) %>% #反向选择去除rowMean这一列
-    tibble::column_to_rownames(colnames(.)[1])
-  
-  save(exprSet, file = "exprSet_.Rda")  ## 带gene symbol 表达矩阵
-  
-  pdata = pData(gset)
+  pdata = pData(gset1)
   table(pdata$characteristics_ch1.3)
   pdata1 <- subset(pdata, pdata$characteristics_ch1.3 ==  "histology: ADC")
   pdata1 <- pdata1[,c(2,41:50)]
