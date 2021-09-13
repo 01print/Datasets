@@ -1,6 +1,6 @@
 ############
 # 2021-09-04/05 
-# small room in 2f // from 21-09-09, in 2#,104-2,XJTU-hc, / 9-10
+# small room in 2f // from 21-09-09, in 2#,104-2,XJTU-hc, / 9-10/13
 # the datasets might needed in the future
 # glioma
 # Pancheng Wu
@@ -322,8 +322,10 @@ GSE4412 {
     
   }
   
-  ## 
+  ## 临床信息处理
   pdata = pData(gset1)
+  pdata1 <- pdata[,c(2,43,45,46,49,50,52)]
+  expr1 <- as.data.frame(t(exprSet1))
   table(pdata$characteristics_ch1.3)
   pdata1 <- subset(pdata, pdata$characteristics_ch1.3 ==  "histology: ADC")
   pdata1 <- pdata1[,c(2,41:50)]
