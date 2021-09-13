@@ -326,22 +326,19 @@ GSE4412 {
   pdata = pData(gset1)
   pdata1 <- pdata[,c(2,43,45,46,49,50,52)]
   expr1 <- as.data.frame(t(exprSet1))
-  table(pdata$characteristics_ch1.3)
-  pdata1 <- subset(pdata, pdata$characteristics_ch1.3 ==  "histology: ADC")
-  pdata1 <- pdata1[,c(2,41:50)]
-  pdata2 <- subset(pdata, pdata$characteristics_ch1.3 == "histology: SQC")
-  pdata2 <- pdata2[,c(2,41:50)]
-  str(pdata1)
-  str(pdata2)
+  expr1 <- expr1[,-1]
+  GSM <- rownames(expr1)
+  expr1 <- cbind("geo_accession" = GSM,expr1)
+  expr1_clinic <- merge(expr1, pdata1, by = "geo_accession")
+  save(expr1_clinic, file = "expr_clinic_GSE4412_GPL96.Rda")
   
-  ## 选取LUAD数据,1为LUAD,2为LUSC(以后可能会用到)
-  GSM <- pdata1$geo_accession
-  a <- exprSet
-  gene <- rownames(exprSet)
-  GSM <- pdata1$geo_accession
-  expr1 <- exprSet[,colnames(exprSet) %in% GSM]
-  exprSet <- a
-  GSM <- pdata2$geo_accession
-  expr2 <- exprSet[,colnames(exprSet) %in% GSM]
-  save(expr1,expr2,pdata1,pdata2, file = "GSE30219_expr_clinic.Rda")
+  #
+  pdata <- pData(gset2)
+  pdata2 <- pdata[,c(2,43,45,46,49,50,52)]
+  expr2 <- as.data.frame(t(exprSet2))
+  expr2 <- expr2[,-1]
+  GSM <- rownames(expr2)
+  expr2 <- cbind("geo_accession" = GSM,expr2)
+  expr2_clinic <- merge(expr2, pdata2, by = "geo_accession")
+  save(expr2_clinic, file = "expr_clinic_GSE4412_GPL97.Rda") ##似乎样本一样，测序平台不一样
 }
